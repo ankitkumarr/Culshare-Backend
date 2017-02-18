@@ -167,9 +167,14 @@ def acceptpost():
 		json.dump(data, f)
 	return 'OK'
 
-
-
-	
+@app.route('/api/listaccepted', methods = ['POST'])
+def listaccepted():
+	token = request.form['token']
+	with open('register.json', 'r') as f:
+		data = json.load(f)
+		if 'acceptedpost' not in data[token]:
+			return '{}'
+		return jsonify(data[token]['acceptedpost'])
 
 if __name__ == '__main__':
 	      app.run(host='0.0.0.0', port=80)		
