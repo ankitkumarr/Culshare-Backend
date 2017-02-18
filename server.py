@@ -70,6 +70,15 @@ def login():
 
 	with open('login.json', 'r') as f:
 		data = json.load(f)
-		password
+		if username not in data:
+			return 'Incorrect User'
+		token = data[username]["token"]
+	with open('register.json', 'r') as f:
+		data = json.load(f)
+		userInformation = data[token]
+		passwordHash = userInformation['password_hash']
+		if passwordHash != hashlib.md5(request.form['password']).hexdigest():
+			return 'Incorrect Password'
+		return token
 
 		
