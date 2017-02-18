@@ -129,5 +129,21 @@ def addRequest():
 		json.dump(data, f)
 	return postHash
 
+
+@app.route('/api/listposts', methods = ['GET'])
+def listposts():
+	with open('posts.json', 'r') as f:
+		try:
+			data = json.load(f)
+		except:
+			return '{}'
+	posts = []
+	for key,value in data.iteritems():
+		if(value['status'] == 'open'):
+			posts.append(value)
+	posts = sorted(posts, key=lambda k: k['epoch'], reverse=True)
+	return jsonify(posts)
+	
+
 if __name__ == '__main__':
 	      app.run(host='0.0.0.0', port=80)		
