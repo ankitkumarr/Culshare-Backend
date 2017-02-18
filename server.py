@@ -107,8 +107,9 @@ def addRequest():
 		'status' : 'open',
 		'epoch' : epoch
 	}
-	
 	postHash = hashlib.md5(json.dumps(postJSON)).hexdigest()
+	postJSON['posthash'] = postHash
+	
 	with open('posts.json', 'r') as f:
 		try:
 			data = json.load(f)
@@ -143,6 +144,31 @@ def listposts():
 			posts.append(value)
 	posts = sorted(posts, key=lambda k: k['epoch'], reverse=True)
 	return jsonify(posts)
+
+@app.route('/api/acceptpost', methods = ['POST'])
+def acceptpost():
+	posthash = request.form['posthash']
+	token = request.form['token']
+	with open('posts.json', 'r') as f:
+		data = json.load(f)
+	with open('posts.json', 'w') as f:
+		acceptedPost = data[posthash]
+		acceptedPost['status'] = 'accepted'
+		data[posthash] = acceptedPost
+		json.dump(data, f)
+	with open('register.json' , 'r') as f:
+		data = json.load(f)
+		userData = data[token]
+		if 'acceptedpost' not in userData:
+			userData['acceptedpost'] = []
+		userData['acceptedpost'].append(acceptedPost)
+	with open('register.json', 'w') as f:
+		data[token] = userData
+		json.dump(data, f)
+	return 'OK'
+
+
+
 	
 
 if __name__ == '__main__':
