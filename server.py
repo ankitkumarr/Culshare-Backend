@@ -123,7 +123,7 @@ def addRequest():
 	with open('register.json', 'r') as f:
 		data = json.load(f)
 		userinfo = data[token]
-		userinfo['postHash'] = postHash
+		userinfo['posthash'] = postHash
 
 	with open('register.json', 'w') as f:
 		data[token] = userinfo
@@ -137,7 +137,7 @@ def listposts():
 		try:
 			data = json.load(f)
 		except:
-			return '{}'
+			return '[]'
 	posts = []
 	for key,value in data.iteritems():
 		if(value['status'] == 'open'):
@@ -173,8 +173,29 @@ def listaccepted():
 	with open('register.json', 'r') as f:
 		data = json.load(f)
 		if 'acceptedpost' not in data[token]:
-			return '{}'
+			return '[]'
 		return jsonify(data[token]['acceptedpost'])
+
+@app.route('/api/getlisting', methods = ['POST'])
+def getlisting():
+	token = request.form['token']
+	with open('register.json', 'r') as f:
+		try:
+			data = json.load(f)
+		except ValueError:
+			data = {}
+	
+	with open('posts.json', 'r') as f:
+		try:
+			post = json.load(f)
+		except ValueError:
+			return 'null'
+		if 'posthash' not in data[token]:
+			return 'null'
+		if data[token]['posthash'] not in post:
+			return 'null'
+		return jsonify(post[data[token]['posthash']])
+
 
 if __name__ == '__main__':
 	      app.run(host='0.0.0.0', port=80)		
