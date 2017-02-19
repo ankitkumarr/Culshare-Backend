@@ -197,10 +197,29 @@ def getlisting():
 		if post[data[token]['posthash']]['status'] == 'open':
 			return jsonify(post[data[token]['posthash']])
 		else:
-			return null
+			return 'null'
 
 
-#@app.route('/api/deletepost'
+@app.route('/api/deletepost', methods = ['POST'])
+def deletepost():
+	token = request.form['token']
+	posthash = request.form['posthash']
+	with open('register.json', 'r') as f:
+		data = json.load(f)
+		if token not in data:
+			return 'null'
+
+	with open('posts.json', 'r') as f:
+		data = json.load(f)
+		if posthash not in data:
+			return 'null'
+		thepost = data[posthash]
+		thepost['status'] = 'deleted'
+
+	with open('posts.json', 'w') as f:
+		data[posthash] = thepost
+		json.dump(data, f)
+	return 'OK'
 
 
 if __name__ == '__main__':
