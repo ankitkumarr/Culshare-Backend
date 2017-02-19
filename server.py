@@ -194,7 +194,13 @@ def getlisting():
 			return 'null'
 		if data[token]['posthash'] not in post:
 			return 'null'
-		return jsonify(post[data[token]['posthash']])
+		if post[data[token]['posthash']]['status'] == 'open':
+			return jsonify(post[data[token]['posthash']])
+		else:
+			return null
+
+
+#@app.route('/api/deletepost'
 
 
 if __name__ == '__main__':
